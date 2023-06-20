@@ -34,7 +34,9 @@ public struct ISO8601DateTranscoder: DateTranscoder {
 
     /// Creates and returns a date object from the specified ISO 8601 formatted string representation.
     public func decode(_ dateString: String) throws -> Date {
-        guard let date = ISO8601DateFormatter().date(from: dateString) else {
+        let fallbackFormatter = ISO8601DateFormatter()
+        fallbackFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
+        guard let date = ISO8601DateFormatter().date(from: dateString) ?? fallbackFormatter.date(from: dateString) else {
             throw DecodingError.dataCorrupted(
                 .init(
                     codingPath: [],
